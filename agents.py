@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 from tools import search_tool, fetch_full_page
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -10,6 +11,7 @@ llm_strong = ChatOpenAI(model="gpt-4o", temperature=0)
 
 def planner(state):
     query = state["query"]
+    current_date = datetime.now().strftime("%B %d, %Y")
     mode = state["mode"]
     date_range = state.get("date_range", "past 7 days")
 
@@ -38,7 +40,8 @@ def planner(state):
 
         Analyze this research query and decompose it into 3-5 focused
         sub-questions that together would provide a comprehensive answer:
-
+        TODAY'S DATE: {current_date}
+        {"Search queries MUST reference " + current_date[:current_date.rfind(" ")] + ". Do NOT use dates from 2021, 2022, 2023, 2024, 2025 or earlier." if mode in ["weekly", "monthly"] else "You may reference any time period relevant to the query, but be aware the current date is " + current_date + "."}
         QUERY: {query}
 
         For each sub-question provide:
